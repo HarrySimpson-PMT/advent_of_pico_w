@@ -1,10 +1,5 @@
-[package]
-name = "advent_supplement"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-tokio = { version = "1", features = ["full"] } # For async TCP operations
-serde = { version = "1.0", features = ["derive"] } # For configuration
-serde_json = "1.0" # For handling JSON if needed
-anyhow = "1.0" # For error handling
+[workspace]
+members = [
+    "advent_solver", # Your existing Advent of Code project
+    #"pico_project",  # Your Pico W microcontroller project
+]
