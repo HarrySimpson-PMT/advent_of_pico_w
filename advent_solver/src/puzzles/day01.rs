@@ -4,11 +4,13 @@ use tokio::io;
 use crate::send_data_to_pico;
 
 pub async fn solve_a(
-     input_lines: &Vec<String>,
+    lines: &Vec<String>,
 )-> io::Result<()>{
     println!("Solving Day 1, Part A");
-    let lines = input_lines.to_vec();
-    // send_lines(input_lines.to_vec());
+    //copy lines to send to pico
+    let input_lines = lines.clone();
+    let Result = send_data_to_pico(input_lines).await;
+
 
     let mut pq1 = BinaryHeap::new(); // Priority queue for the first numbers
     let mut pq2 = BinaryHeap::new(); // Priority queue for the second numbers
@@ -30,6 +32,10 @@ pub async fn solve_a(
 
     // Print the result
     println!("Total sum of absolute differences: {}", total_diff);
+    //if result then check if is eq
+    if Result.is_ok(){
+
+    }
     Ok(())
 
 }

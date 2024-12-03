@@ -1,14 +1,14 @@
 use crate::send_data_to_pico;
 use tokio::io;
 
-pub async fn solve_a(input_lines: &[String]) -> io::Result<()> {
+pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 3, Part A");
-    send_data_to_pico(input_lines.to_vec()).await
+    send_data_to_pico(lines.to_vec()).await
 }
 
-pub async fn solve_b(input_lines: &[String]) -> io::Result<()> {
+pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 3, Part B");
-    send_data_to_pico(input_lines.to_vec()).await
+    send_data_to_pico(lines.to_vec()).await
 }
 /// Determines the day name (e.g., "Day01") based on the module path
 fn get_day_name() -> String {

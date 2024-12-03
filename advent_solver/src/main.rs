@@ -3,8 +3,6 @@ use std::fs;
 use std::path::Path;
 mod puzzles;
 
-use day01::solve_a;
-use day01::solve_b;
 use puzzles::*;
 
 #[derive(Debug)]
