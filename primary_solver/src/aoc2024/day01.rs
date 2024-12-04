@@ -9,7 +9,7 @@ pub async fn solve_a(
     println!("Solving Day 1, Part A");
     //copy lines to send to pico
     let input_lines = lines.clone();
-    let Result = send_data_to_pico(input_lines).await;
+    let result = send_data_to_pico(input_lines).await;
 
 
     let mut pq1 = BinaryHeap::new(); // Priority queue for the first numbers
@@ -33,7 +33,7 @@ pub async fn solve_a(
     // Print the result
     println!("Total sum of absolute differences: {}", total_diff);
     //if result then check if is eq
-    if Result.is_ok(){
+    if result.is_ok(){
 
     }
     Ok(())

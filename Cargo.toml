@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "advent_solver", # Your existing Advent of Code project
-    #"pico_project",  # Your Pico W microcontroller project
+    "primary_solver", # Your existing Advent of Code project
+    "pico_solver",  # Your Pico W microcontroller project
 ]

@@ -1,9 +1,9 @@
 #[allow(dead_code)]
 use std::fs;
 use std::path::Path;
-mod puzzles;
+mod aoc2024;
 
-use puzzles::*;
+use aoc2024::*;
 
 #[derive(Debug)]
 enum Puzzle {
@@ -13,6 +13,10 @@ enum Puzzle {
     Day02B,
     Day03A,
     Day03B,
+    Day04A,
+    Day04B,
+    Day05A,
+    Day05B,
 }
 
 impl Puzzle {
@@ -25,13 +29,14 @@ impl Puzzle {
             (2, 'B') => Puzzle::Day02B,
             (3, 'A') => Puzzle::Day03A,
             (3, 'B') => Puzzle::Day03B,
-
-            // Add other days here
+            (4, 'A') => Puzzle::Day04A,
+            (4, 'B') => Puzzle::Day04B,       
+            (5, 'A') => Puzzle::Day05A,
+            (5, 'B') => Puzzle::Day05B,
             _ => panic!("Invalid day or part"),
         }
     }
 
-    // Helper method to extract (day, part)
     pub fn to_day_part(&self) -> (u8, char) {
         match self {
             Puzzle::Day01A => (1, 'A'),
@@ -40,6 +45,10 @@ impl Puzzle {
             Puzzle::Day02B => (2, 'B'),
             Puzzle::Day03A => (3, 'A'),
             Puzzle::Day03B => (3, 'B'),
+            Puzzle::Day04A => (4, 'A'),
+            Puzzle::Day04B => (4, 'B'),
+            Puzzle::Day05A => (5, 'A'),
+            Puzzle::Day05B => (5, 'B'),
         }
     }
 }
@@ -48,7 +57,7 @@ use tokio::time::{timeout, Duration};
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day01A;
+    let selected_puzzle = Puzzle::Day04B;
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -84,6 +93,26 @@ async fn main() {
                     eprintln!("Error: {}", e);
                 }
             }
+            Puzzle::Day04A => {
+                if let Err(e) = day04::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day04B => {
+                if let Err(e) = day04::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day05A => {
+                if let Err(e) = day05::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day05B => {
+                if let Err(e) = day05::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
         }
     } else {
         println!("Input file not found for puzzle: {:?}", selected_puzzle);
@@ -91,13 +120,12 @@ async fn main() {
 }
 
 fn get_input_for_puzzle(puzzle: &Puzzle) -> Option<Vec<String>> {
-    let (day, _part) = puzzle.to_day_part(); // Extract day and part
+    let (day, _part) = puzzle.to_day_part();
 
-    // Generate the file path dynamically
-    let file_name = format!("day{:02}//file.txt", day); // e.g., "day01//file.txt"
-    let input_path = Path::new("advent_solver\\inputs").join(file_name);
+    let file_name = format!("day{:02}//file.txt", day);
+    let input_path = Path::new("primary_solver\\inputs\\2024").join(file_name);
+    print!("{:?}", input_path);
 
-    // Read the file and return its content as a Vec<String>
     fs::read_to_string(input_path)
         .ok()
         .map(|content| content.lines().map(String::from).collect())
@@ -116,7 +144,6 @@ pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
         lines.len()
     );
 
-    // Establish the connection
     let mut stream = match timeout(Duration::from_secs(5), TcpStream::connect(&address)).await {
         Ok(Ok(stream)) => {
             println!("Successfully connected to the server!");
@@ -135,22 +162,17 @@ pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
         }
     };
 
-    // Helper function to read acknowledgment
     use tokio::time::{sleep, Duration};
 
-    // Helper function to simulate a delay (no acknowledgment)
     async fn read_ack() {
-        // Add a delay to simulate server processing time
         sleep(Duration::from_millis(80)).await;
     }
 
-    // Send the "Start" command
     println!("Sending 'Start'");
     stream.write_all(b"Start\r\n").await?;
     stream.flush().await?;
     read_ack().await;
 
-    // Send the number of lines
     let line_count = lines.len();
     println!("Sending line count: {}", line_count);
     stream
@@ -159,7 +181,6 @@ pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
     stream.flush().await?;
     read_ack().await;
 
-    // Send each line and wait for acknowledgment
     for line in &lines {
         println!("Sending line: {}", line);
         stream.write_all(format!("{}\r\n", line).as_bytes()).await?;
@@ -167,13 +188,11 @@ pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
         read_ack().await;
     }
 
-    // Indicate end of transmission
     println!("Sending 'GO'");
     stream.write_all(b"GO\r\n").await?;
     stream.flush().await?;
     read_ack().await;
 
-    // Read the server's final response
     let mut buffer = [0; 1024];
     println!("Waiting for final response...");
     let n = stream.read(&mut buffer).await?;
