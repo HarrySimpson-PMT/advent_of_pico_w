@@ -1,5 +1,3 @@
-#This script gets run on the deployment server to flash the code to the pico.
-
 export PATH=$PATH:/home/$USER/.cargo/bin
 
 cd /home/harry/src/AOPW

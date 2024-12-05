@@ -17,6 +17,8 @@ enum Puzzle {
     Day04B,
     Day05A,
     Day05B,
+    Day06A,
+    Day06B,
 }
 
 impl Puzzle {
@@ -33,6 +35,8 @@ impl Puzzle {
             (4, 'B') => Puzzle::Day04B,       
             (5, 'A') => Puzzle::Day05A,
             (5, 'B') => Puzzle::Day05B,
+            (6, 'A') => Puzzle::Day06A,
+            (6, 'B') => Puzzle::Day06B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -49,15 +53,17 @@ impl Puzzle {
             Puzzle::Day04B => (4, 'B'),
             Puzzle::Day05A => (5, 'A'),
             Puzzle::Day05B => (5, 'B'),
+            Puzzle::Day06A => (6, 'A'),
+            Puzzle::Day06B => (6, 'B'),
         }
     }
 }
 use tokio::net::TcpStream;
-use tokio::time::{timeout, Duration};
+use tokio::time::{timeout};
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day04B;
+    let selected_puzzle = Puzzle::Day05B;
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -113,6 +119,16 @@ async fn main() {
                     eprintln!("Error: {}", e);
                 }
             }
+            Puzzle::Day06A => {
+                if let Err(e) = day06::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day06B => {
+                if let Err(e) = day06::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
         }
     } else {
         println!("Input file not found for puzzle: {:?}", selected_puzzle);
@@ -133,7 +149,7 @@ fn get_input_for_puzzle(puzzle: &Puzzle) -> Option<Vec<String>> {
 
 use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
 
-pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
+pub async fn send_data_to_pico(lines: &Vec<String>) -> io::Result<()> {
     let host = "10.0.0.139";
     let port = 1234;
     let address = format!("{}:{}", host, port);
@@ -181,7 +197,7 @@ pub async fn send_data_to_pico(lines: Vec<String>) -> io::Result<()> {
     stream.flush().await?;
     read_ack().await;
 
-    for line in &lines {
+    for line in lines {
         println!("Sending line: {}", line);
         stream.write_all(format!("{}\r\n", line).as_bytes()).await?;
         stream.flush().await?;

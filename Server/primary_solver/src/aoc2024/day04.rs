@@ -1,8 +1,7 @@
-use crate::send_data_to_pico;
 use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 3, Part A");
+    println!("Solving Day 4, Part A");
     // send_data_to_pico(lines.to_vec()).await
     let target = "XMAS";
     let found_count = count_occurrences(&lines, target);
@@ -72,7 +71,7 @@ fn check_direction(
 }
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 3, Part B");
+    println!("Solving Day 4, Part B");
     // send_data_to_pico(lines.to_vec()).await
     let pattern_count = find_pattern(&lines);
 
@@ -129,18 +128,17 @@ fn find_pattern(matrix: &Vec<String>) -> usize {
     count
 }
 
-/// Determines the day name (e.g., "Day01") based on the module path
-fn get_day_name() -> String {
-    let module_path = module_path!(); // e.g., "puzzles::day01"
-    let module_name = module_path.split("::").last().unwrap_or("Unknown");
-    module_name.to_string().replace("day", "Day")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::get_input_for_puzzle;
     use crate::Puzzle;
+    /// Determines the day name (e.g., "Day01") based on the module path
+    fn get_day_name() -> String {
+        let module_path = module_path!(); // e.g., "puzzles::day01"
+        let module_name = module_path.split("::").last().unwrap_or("Unknown");
+        module_name.to_string().replace("day", "Day")
+    }
 
     fn get_puzzle(part: char) -> Puzzle {
         let day = get_day_name().replace("Day", "").parse::<u8>().unwrap_or(1);

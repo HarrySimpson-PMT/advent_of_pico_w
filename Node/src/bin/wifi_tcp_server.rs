@@ -25,7 +25,7 @@ use rand::RngCore;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
-use pico_solver::solvers;
+use pico_node::solvers;
 
 include!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -286,13 +286,14 @@ async fn main(spawner: Spawner) {
             }
         }
     }
+    use pico_node::solvers::AOCTEST; // Import the day01 module
 
     fn process_input(
         input_lines: &Vec<[u8; MAX_CHARS], MAX_LINES>,
         line_count: usize,
     ) -> String<256> {
         // Delegate to day01's solve function
-        pico_solver::solvers::AOCTEST::solve(input_lines, line_count)
+        AOCTEST::solve(input_lines, line_count)
     }
 }
 

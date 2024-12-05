@@ -1,11 +1,9 @@
-#this code is for creating a file that can be transfered to the pico using the boot button over usb. working as of 2024/12/04
-
 #!/bin/bash
 set -e  # Stop on first error
 
 BINARY_NAME="wifi_tcp_server"
 
-# Build the binary - this might not work since its in a workspace now, depends on where you run it from.
+# Build the binary
 echo "Building $BINARY_NAME..."
 cargo build --release --bin $BINARY_NAME
 

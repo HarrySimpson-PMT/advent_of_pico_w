@@ -1,13 +1,9 @@
 # Define variables
-$deploymentfile = "./pico_solver/target/thumbv6m-none-eabi/debug/wifi_tcp_server"
-$deploymentscript = "./pico_solver/scripts/run.sh"
+$deploymentfile = "./target/thumbv6m-none-eabi/debug/wifi_tcp_server"
+$deploymentscript = "./scripts/run.sh"
 $targetUser = "harry"
 $targetHost = "10.0.0.100"
 $targetFilePath = "/home/harry/src/AOPW"
-
-#list all the files in the current directory
-Get-ChildItem
-
 
 # Transfer file to Linux machine
 Write-Host "Transferring file to Linux machine..."
