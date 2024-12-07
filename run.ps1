@@ -14,7 +14,9 @@ cargo build
 # Step 2: Open remote_deploy.ps1 in a new terminal
 Write-Host "Launching remote deployment script in a new terminal..."
 Start-Process powershell -ArgumentList "-NoExit", "-File", $REMOTE_DEPLOY_SCRIPT
+cd ..
 
-# # Step 3: Run the primary_solver in debug mode
-# Write-Host "Running $HOST_PROJECT in debug mode..."
-# cargo run --package $HOST_PROJECT
+cd $pwd\Server
+cargo run
+cd ..
+

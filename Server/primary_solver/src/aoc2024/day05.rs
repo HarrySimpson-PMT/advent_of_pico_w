@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}};
+use std::collections::{HashMap, HashSet};
 use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
@@ -112,7 +112,7 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     let (_, invalid_lines) = split_lines(&second_part, &dictionary);
 
     // Fix the invalid lines
-    let result = fix_invalid_lines(&invalid_lines, &dictionary, &[]);
+    let result = fix_invalid_lines(&invalid_lines, &dictionary);
 
     println!("Result: {}", result);
 
@@ -173,7 +173,6 @@ pub fn topological_sort_line(numbers: &[i32], dictionary: &HashMap<i32, Vec<i32>
 pub fn fix_invalid_lines(
     invalid_lines: &[Vec<i32>],
     dictionary: &HashMap<i32, Vec<i32>>,
-    master_order: &[i32],
 ) -> i32 {
     let mut results = 0;
 

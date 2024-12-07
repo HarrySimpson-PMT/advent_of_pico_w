@@ -19,6 +19,10 @@ enum Puzzle {
     Day05B,
     Day06A,
     Day06B,
+    Day07A,
+    Day07B,
+    Day08A,
+    Day08B,
 }
 
 impl Puzzle {
@@ -37,6 +41,10 @@ impl Puzzle {
             (5, 'B') => Puzzle::Day05B,
             (6, 'A') => Puzzle::Day06A,
             (6, 'B') => Puzzle::Day06B,
+            (7, 'A') => Puzzle::Day07A,
+            (7, 'B') => Puzzle::Day07B,
+            (8, 'A') => Puzzle::Day08A,
+            (8, 'B') => Puzzle::Day08B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -55,6 +63,10 @@ impl Puzzle {
             Puzzle::Day05B => (5, 'B'),
             Puzzle::Day06A => (6, 'A'),
             Puzzle::Day06B => (6, 'B'),
+            Puzzle::Day07A => (7, 'A'),
+            Puzzle::Day07B => (7, 'B'),
+            Puzzle::Day08A => (8, 'A'),
+            Puzzle::Day08B => (8, 'B'),
         }
     }
 }
@@ -63,7 +75,7 @@ use tokio::time::{timeout};
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day05B;
+    let selected_puzzle = Puzzle::Day07B;
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -126,6 +138,26 @@ async fn main() {
             }
             Puzzle::Day06B => {
                 if let Err(e) = day06::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day07A => {
+                if let Err(e) = day07::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day07B => {
+                if let Err(e) = day07::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day08A => {
+                if let Err(e) = day08::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day08B => {
+                if let Err(e) = day08::solve_b(&input_lines).await {
                     eprintln!("Error: {}", e);
                 }
             }
