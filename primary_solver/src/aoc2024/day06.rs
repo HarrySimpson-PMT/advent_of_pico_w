@@ -1,4 +1,4 @@
-use std::{collections::HashSet, result};
+use std::collections::HashSet;
 use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
@@ -21,7 +21,7 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let mut visited = HashSet::new();
     let (mut x, mut y) = start_pos;
 
-    while x >= 0 && y >= 0 && y < grid.len() && x < grid[0].len() {
+    while y < grid.len() && x < grid[0].len() {
         visited.insert((x, y));
         //update the grid with the current position
         grid[y][x] = 'X';

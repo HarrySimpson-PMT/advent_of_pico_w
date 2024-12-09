@@ -23,6 +23,10 @@ enum Puzzle {
     Day07B,
     Day08A,
     Day08B,
+    Day09A,
+    Day09B,
+    Day10A,
+    Day10B,
 }
 
 impl Puzzle {
@@ -45,6 +49,10 @@ impl Puzzle {
             (7, 'B') => Puzzle::Day07B,
             (8, 'A') => Puzzle::Day08A,
             (8, 'B') => Puzzle::Day08B,
+            (9, 'A') => Puzzle::Day09A,
+            (9, 'B') => Puzzle::Day09B,
+            (10, 'A') => Puzzle::Day10A,
+            (10, 'B') => Puzzle::Day10B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -67,15 +75,19 @@ impl Puzzle {
             Puzzle::Day07B => (7, 'B'),
             Puzzle::Day08A => (8, 'A'),
             Puzzle::Day08B => (8, 'B'),
+            Puzzle::Day09A => (9, 'A'),
+            Puzzle::Day09B => (9, 'B'),
+            Puzzle::Day10A => (10, 'A'),
+            Puzzle::Day10B => (10, 'B'),
         }
     }
 }
 use tokio::net::TcpStream;
-use tokio::time::{timeout};
+use tokio::time::timeout;
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day07B;
+    let selected_puzzle = Puzzle::Day09B;
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -158,6 +170,26 @@ async fn main() {
             }
             Puzzle::Day08B => {
                 if let Err(e) = day08::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day09A => {
+                if let Err(e) = day09::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day09B => {
+                if let Err(e) = day09::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day10A => {
+                if let Err(e) = day10::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day10B => {
+                if let Err(e) = day10::solve_b(&input_lines).await {
                     eprintln!("Error: {}", e);
                 }
             }

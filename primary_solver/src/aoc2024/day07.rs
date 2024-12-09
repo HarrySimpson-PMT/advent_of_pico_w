@@ -74,7 +74,7 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             return acc == target
         }
         let current_number = numbers[index];
-        if(acc>target){
+        if acc>target {
             return false
         }
         index += 1;
