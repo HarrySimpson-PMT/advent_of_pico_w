@@ -27,6 +27,8 @@ enum Puzzle {
     Day09B,
     Day10A,
     Day10B,
+    Day11A,
+    Day11B,
 }
 
 impl Puzzle {
@@ -53,6 +55,8 @@ impl Puzzle {
             (9, 'B') => Puzzle::Day09B,
             (10, 'A') => Puzzle::Day10A,
             (10, 'B') => Puzzle::Day10B,
+            (11, 'A') => Puzzle::Day11A,
+            (11, 'B') => Puzzle::Day11B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -79,6 +83,8 @@ impl Puzzle {
             Puzzle::Day09B => (9, 'B'),
             Puzzle::Day10A => (10, 'A'),
             Puzzle::Day10B => (10, 'B'),
+            Puzzle::Day11A => (11, 'A'),
+            Puzzle::Day11B => (11, 'B'),
         }
     }
 }
@@ -87,7 +93,7 @@ use tokio::time::timeout;
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day09B;
+    let selected_puzzle = Puzzle::Day10B;
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -190,6 +196,16 @@ async fn main() {
             }
             Puzzle::Day10B => {
                 if let Err(e) = day10::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day11A => {
+                if let Err(e) = day11::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day11B => {
+                if let Err(e) = day11::solve_b(&input_lines).await {
                     eprintln!("Error: {}", e);
                 }
             }
