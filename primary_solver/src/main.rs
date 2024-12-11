@@ -2,8 +2,10 @@
 use std::fs;
 use std::path::Path;
 mod aoc2024;
+mod comms;
 
 use aoc2024::*;
+use comms::pico_sender::send_data_to_pico;
 
 #[derive(Debug)]
 enum Puzzle {
@@ -29,6 +31,8 @@ enum Puzzle {
     Day10B,
     Day11A,
     Day11B,
+    Day12A,
+    Day12B,
 }
 
 impl Puzzle {
@@ -57,6 +61,8 @@ impl Puzzle {
             (10, 'B') => Puzzle::Day10B,
             (11, 'A') => Puzzle::Day11A,
             (11, 'B') => Puzzle::Day11B,
+            (12, 'A') => Puzzle::Day12A,
+            (12, 'B') => Puzzle::Day12B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -85,15 +91,28 @@ impl Puzzle {
             Puzzle::Day10B => (10, 'B'),
             Puzzle::Day11A => (11, 'A'),
             Puzzle::Day11B => (11, 'B'),
+            Puzzle::Day12A => (12, 'A'),
+            Puzzle::Day12B => (12, 'B'),
         }
     }
 }
-use tokio::net::TcpStream;
-use tokio::time::timeout;
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day10B;
+    let selected_puzzle = Puzzle::Day01A;
+    let somelines = match get_input_for_puzzle(&selected_puzzle) {
+        Some(lines) => lines,
+        None => {
+            println!("Input file not found for puzzle: {:?}", selected_puzzle);
+            return;
+        }
+    };
+    send_data_to_pico(&somelines).await;
+
+    return;
+
+    let selected_puzzle = Puzzle::Day11B;
+
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
         println!("Number of lines: {}", input_lines.len());
@@ -209,6 +228,16 @@ async fn main() {
                     eprintln!("Error: {}", e);
                 }
             }
+            Puzzle::Day12A => {
+                if let Err(e) = day12::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }   
+            Puzzle::Day12B => {
+                if let Err(e) = day12::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
         }
     } else {
         println!("Input file not found for puzzle: {:?}", selected_puzzle);
@@ -227,73 +256,5 @@ fn get_input_for_puzzle(puzzle: &Puzzle) -> Option<Vec<String>> {
         .map(|content| content.lines().map(String::from).collect())
 }
 
-use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
 
-pub async fn send_data_to_pico(lines: &Vec<String>) -> io::Result<()> {
-    let host = "10.0.0.139";
-    let port = 1234;
-    let address = format!("{}:{}", host, port);
-    println!(
-        "Connecting to {}:{} to send {} lines",
-        host,
-        port,
-        lines.len()
-    );
 
-    let mut stream = match timeout(Duration::from_secs(5), TcpStream::connect(&address)).await {
-        Ok(Ok(stream)) => {
-            println!("Successfully connected to the server!");
-            stream
-        }
-        Ok(Err(e)) => {
-            eprintln!("Connection failed: {}", e);
-            return Err(e);
-        }
-        Err(_) => {
-            eprintln!("Connection timed out.");
-            return Err(io::Error::new(
-                io::ErrorKind::TimedOut,
-                "Connection timed out",
-            ));
-        }
-    };
-
-    use tokio::time::{sleep, Duration};
-
-    async fn read_ack() {
-        sleep(Duration::from_millis(80)).await;
-    }
-
-    println!("Sending 'Start'");
-    stream.write_all(b"Start\r\n").await?;
-    stream.flush().await?;
-    read_ack().await;
-
-    let line_count = lines.len();
-    println!("Sending line count: {}", line_count);
-    stream
-        .write_all(format!("{}\r\n", line_count).as_bytes())
-        .await?;
-    stream.flush().await?;
-    read_ack().await;
-
-    for line in lines {
-        println!("Sending line: {}", line);
-        stream.write_all(format!("{}\r\n", line).as_bytes()).await?;
-        stream.flush().await?;
-        read_ack().await;
-    }
-
-    println!("Sending 'GO'");
-    stream.write_all(b"GO\r\n").await?;
-    stream.flush().await?;
-    read_ack().await;
-
-    let mut buffer = [0; 1024];
-    println!("Waiting for final response...");
-    let n = stream.read(&mut buffer).await?;
-    println!("Received: {}", String::from_utf8_lossy(&buffer[..n]));
-
-    println!("Data sent successfully!");
-    Ok(())
-}

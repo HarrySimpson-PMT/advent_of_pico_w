@@ -1,4 +1,1 @@
-Sample input for Day 2, Part Aca
-this is another line
-and another line
-then let us
+3935565 31753 437818 7697 5 38 0 123

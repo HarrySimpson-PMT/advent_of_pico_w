@@ -1,15 +1,11 @@
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use tokio::io;
-use crate::send_data_to_pico;
 
 pub async fn solve_a(
     lines: &Vec<String>,
 )-> io::Result<()>{
     println!("Solving Day 1, Part A");
-
-    let result = send_data_to_pico(lines).await;
-
     let mut pq1 = BinaryHeap::new(); // Priority queue for the first numbers
     let mut pq2 = BinaryHeap::new(); // Priority queue for the second numbers
     for line in lines {
@@ -30,10 +26,7 @@ pub async fn solve_a(
 
     // Print the result
     println!("Total sum of absolute differences: {}", total_diff);
-    //if result then check if is eq
-    if result.is_ok(){
-
-    }
+    //if result then check if is eq 
     Ok(())
 
 }
