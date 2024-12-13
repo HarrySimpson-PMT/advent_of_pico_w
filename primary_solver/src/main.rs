@@ -5,6 +5,8 @@ mod aoc2024;
 mod comms;
 
 use aoc2024::*;
+
+#[allow(unused_imports)]
 use comms::pico_sender::send_data_to_pico;
 
 #[derive(Debug)]
@@ -33,6 +35,10 @@ enum Puzzle {
     Day11B,
     Day12A,
     Day12B,
+    Day13A,
+    Day13B,
+    Day14A,
+    Day14B,
 }
 
 impl Puzzle {
@@ -63,6 +69,10 @@ impl Puzzle {
             (11, 'B') => Puzzle::Day11B,
             (12, 'A') => Puzzle::Day12A,
             (12, 'B') => Puzzle::Day12B,
+            (13, 'A') => Puzzle::Day13A,
+            (13, 'B') => Puzzle::Day13B,
+            (14, 'A') => Puzzle::Day14A,
+            (14, 'B') => Puzzle::Day14B,    
             _ => panic!("Invalid day or part"),
         }
     }
@@ -93,25 +103,29 @@ impl Puzzle {
             Puzzle::Day11B => (11, 'B'),
             Puzzle::Day12A => (12, 'A'),
             Puzzle::Day12B => (12, 'B'),
+            Puzzle::Day13A => (13, 'A'),
+            Puzzle::Day13B => (13, 'B'),
+            Puzzle::Day14A => (14, 'A'),
+            Puzzle::Day14B => (14, 'B'),
         }
     }
 }
 
 #[tokio::main]
 async fn main() {
-    let selected_puzzle = Puzzle::Day01A;
-    let somelines = match get_input_for_puzzle(&selected_puzzle) {
-        Some(lines) => lines,
-        None => {
-            println!("Input file not found for puzzle: {:?}", selected_puzzle);
-            return;
-        }
-    };
-    send_data_to_pico(&somelines).await;
+    // let selected_puzzle = Puzzle::Day01A;
+    // let somelines = match get_input_for_puzzle(&selected_puzzle) {
+    //     Some(lines) => lines,
+    //     None => {
+    //         println!("Input file not found for puzzle: {:?}", selected_puzzle);
+    //         return;
+    //     }
+    // };
+    // send_data_to_pico(&somelines).await;
 
-    return;
+    // return;
 
-    let selected_puzzle = Puzzle::Day11B;
+    let selected_puzzle = Puzzle::Day13A;
 
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
@@ -235,6 +249,26 @@ async fn main() {
             }   
             Puzzle::Day12B => {
                 if let Err(e) = day12::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day13A => {
+                if let Err(e) = day13::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day13B => {
+                if let Err(e) = day13::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day14A => {
+                if let Err(e) = day14::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::Day14B => {
+                if let Err(e) = day14::solve_b(&input_lines).await {
                     eprintln!("Error: {}", e);
                 }
             }

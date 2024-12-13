@@ -85,7 +85,7 @@ fn count_stones(
     }
 
     // Apply rules to transform the stone
-    let mut next_stones: Vec<u64> = match stone {
+    let next_stones: Vec<u64> = match stone {
         0 => vec![1], // Rule 1: Replace 0 with 1
         _ if stone.to_string().len() % 2 == 0 => {
             // Rule 2: Split even-length stones

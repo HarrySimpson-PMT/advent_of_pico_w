@@ -175,6 +175,7 @@ fn calculate_checksum(layout: &[i32]) -> i128 {
         .sum()
 }
 
+#[allow(dead_code)]
 fn display_layout(layout: &[i32]) -> String {
     layout
         .iter()

@@ -1,10 +1,8 @@
 use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
-use std::fs;
-use std::path::Path;
 use tokio::net::TcpStream;
 use tokio::time::timeout;
 
-
+#[allow(dead_code)]
 pub async fn send_data_to_pico(lines: &Vec<String>) -> io::Result<()> {
     let host = "10.0.0.139";
     let port = 1234;
@@ -49,9 +47,22 @@ pub async fn send_data_to_pico(lines: &Vec<String>) -> io::Result<()> {
     //send the data
     stream.write_all(lines.as_bytes()).await?;
 
-    let mut buffer = [0; 1024];
+    let mut buffer = [0; 4096];
     println!("Waiting for final response...");
-    let n = stream.read(&mut buffer).await?;
+    let n = match stream.read(&mut buffer).await {
+        Ok(0) => {
+            eprintln!("Server closed the connection.");
+            return Err(io::Error::new(
+                io::ErrorKind::ConnectionReset,
+                "Server closed the connection",
+            ));
+        },
+        Ok(n) => n,
+        Err(e) => {
+            eprintln!("Failed to read data from the server: {}", e);
+            return Err(e);
+        }
+    };
     println!("Received: {}", String::from_utf8_lossy(&buffer[..n]));
 
     println!("Data sent successfully!");
