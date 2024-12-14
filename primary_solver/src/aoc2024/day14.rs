@@ -1,22 +1,126 @@
-use tokio::io;
+use tokio::io::{self, AsyncWriteExt};
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 6, Part A");
-    //print the input
+    let width = 101;
+    let height = 103;
+    let mid_x = width / 2;
+    let mid_y = height / 2;
+
+    let mut quadrant_counts = [0; 4]; // Top-left, Top-right, Bottom-left, Bottom-right
+
     for line in lines {
-        println!("{}", line);
+        // Parse position and velocity
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let p: Vec<i32> = parts[0][2..]
+            .split(',')
+            .map(|s| s.parse().unwrap())
+            .collect();
+        let v: Vec<i32> = parts[1][2..]
+            .split(',')
+            .map(|s| s.parse().unwrap())
+            .collect();
+        let (p_x, p_y) = (p[0], p[1]);
+        let (v_x, v_y) = (v[0], v[1]);
+
+        // Calculate new position after 100 seconds
+        let x_new = (p_x + 100 * v_x).rem_euclid(width as i32);
+        let y_new = (p_y + 100 * v_y).rem_euclid(height as i32);
+
+        // Ignore robots on center lines
+        if x_new == mid_x as i32 || y_new == mid_y as i32 {
+            continue;
+        }
+
+        // Determine the quadrant
+        if x_new < mid_x as i32 && y_new < mid_y as i32 {
+            quadrant_counts[0] += 1; // Top-left
+        } else if x_new >= mid_x as i32 && y_new < mid_y as i32 {
+            quadrant_counts[1] += 1; // Top-right
+        } else if x_new < mid_x as i32 && y_new >= mid_y as i32 {
+            quadrant_counts[2] += 1; // Bottom-left
+        } else if x_new >= mid_x as i32 && y_new >= mid_y as i32 {
+            quadrant_counts[3] += 1; // Bottom-right
+        }
     }
+
+    // Calculate the safety factor
+    let safety_factor: i32 = quadrant_counts.iter().product();
+    println!("Safety Factor: {}", safety_factor);
+
     Ok(())
 }
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 6, Part B");
-    //print the input
-    for line in lines {
-        println!("{}", line);
+    let width = 101;
+    let height = 103;
+
+    // Parse positions and velocities
+    let mut robots: Vec<((i32, i32), (i32, i32))> = lines
+        .iter()
+        .map(|line| {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            let p: Vec<i32> = parts[0][2..]
+                .split(',')
+                .map(|s| s.parse().unwrap())
+                .collect();
+            let v: Vec<i32> = parts[1][2..]
+                .split(',')
+                .map(|s| s.parse().unwrap())
+                .collect();
+            ((p[0], p[1]), (v[0], v[1]))
+        })
+        .collect();
+
+    let mut seconds = 0;
+
+    loop {
+        if seconds > 10_000 {
+            println!("Simulation terminated: exceeded 10,000 seconds.");
+            break;
+        }
+        // print!("\rTime: {} seconds", seconds);
+        for (pos, vel) in &mut robots {
+            pos.0 = (pos.0 + vel.0).rem_euclid(width as i32);
+            pos.1 = (pos.1 + vel.1).rem_euclid(height as i32);
+        }        
+
+        // Create and display the grid
+        let mut grid = vec![vec!['.'; width]; height];
+        for (pos, _) in &robots {
+            grid[pos.1 as usize][pos.0 as usize] = '#';
+        }
+
+        if !grid.iter().any(|row| row.windows(10).any(|slice| slice.iter().all(|&c| c == '#'))) {
+            seconds += 1;
+            continue;
+        }
+        println!("\nTime: {} seconds", seconds+1);
+        break;
+        
+        // Create the grid
+        let mut grid = vec![vec!['.'; width]; height];
+
+        // Update positions and fill the grid
+        for (pos, vel) in &mut robots {
+            grid[pos.1 as usize][pos.0 as usize] = '#';
+        }
+        println!("Time: {} seconds", seconds);
+        for row in &grid {
+            println!("{}", row.iter().collect::<String>());
+        }
+
+        let mut input = String::new();
+        use tokio::io::AsyncBufReadExt;
+        let mut stdin = tokio::io::BufReader::new(tokio::io::stdin());
+        stdin.read_line(&mut input).await.unwrap();
+
+
+        seconds += 1;
     }
+
     Ok(())
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

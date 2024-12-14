@@ -39,6 +39,8 @@ enum Puzzle {
     Day13B,
     Day14A,
     Day14B,
+    day15A,
+    day15B,
 }
 
 impl Puzzle {
@@ -73,6 +75,8 @@ impl Puzzle {
             (13, 'B') => Puzzle::Day13B,
             (14, 'A') => Puzzle::Day14A,
             (14, 'B') => Puzzle::Day14B,    
+            (15, 'A') => Puzzle::day15A,
+            (15, 'B') => Puzzle::day15B,
             _ => panic!("Invalid day or part"),
         }
     }
@@ -107,13 +111,15 @@ impl Puzzle {
             Puzzle::Day13B => (13, 'B'),
             Puzzle::Day14A => (14, 'A'),
             Puzzle::Day14B => (14, 'B'),
+            Puzzle::day15A => (15, 'A'),
+            Puzzle::day15B => (15, 'B'),
         }
     }
 }
 
 #[tokio::main]
 async fn main() {
-    // let selected_puzzle = Puzzle::Day01A;
+    // let selected_puzzle = Puzzle::Day02A;
     // let somelines = match get_input_for_puzzle(&selected_puzzle) {
     //     Some(lines) => lines,
     //     None => {
@@ -125,7 +131,7 @@ async fn main() {
 
     // return;
 
-    let selected_puzzle = Puzzle::Day13A;
+    let selected_puzzle = Puzzle::Day14B;
 
 
     if let Some(input_lines) = get_input_for_puzzle(&selected_puzzle) {
@@ -269,6 +275,16 @@ async fn main() {
             }
             Puzzle::Day14B => {
                 if let Err(e) = day14::solve_b(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::day15A => {
+                if let Err(e) = day15::solve_a(&input_lines).await {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            Puzzle::day15B => {
+                if let Err(e) = day15::solve_b(&input_lines).await {
                     eprintln!("Error: {}", e);
                 }
             }

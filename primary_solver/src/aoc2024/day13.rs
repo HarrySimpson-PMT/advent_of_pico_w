@@ -80,6 +80,7 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     Ok(())
 }
 /// assumes only a single solution - feels cheap but probably because I didn't know about this math before
+/// Diophantine equation
 fn solve_machine(machine: &Machine, factor: i64) -> (i64, i64) {
     let determinate = (machine.button_a_x * machine.button_b_y) - (machine.button_a_y * machine.button_b_x);
     if determinate == 0 {
