@@ -1,4 +1,4 @@
-use tokio::io::{self, AsyncWriteExt};
+use tokio::io::{self};
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let width = 101;
@@ -96,26 +96,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         }
         println!("\nTime: {} seconds", seconds+1);
         break;
-        
-        // Create the grid
-        let mut grid = vec![vec!['.'; width]; height];
-
-        // Update positions and fill the grid
-        for (pos, vel) in &mut robots {
-            grid[pos.1 as usize][pos.0 as usize] = '#';
-        }
-        println!("Time: {} seconds", seconds);
-        for row in &grid {
-            println!("{}", row.iter().collect::<String>());
-        }
-
-        let mut input = String::new();
-        use tokio::io::AsyncBufReadExt;
-        let mut stdin = tokio::io::BufReader::new(tokio::io::stdin());
-        stdin.read_line(&mut input).await.unwrap();
-
-
-        seconds += 1;
     }
 
     Ok(())
