@@ -9,7 +9,7 @@ use comms::pico_sender::send_data_to_pico;
 #[allow(unreachable_code)]
 #[tokio::main]
 async fn main() {
-    let day = 15;
+    let day = 16;
 
     // let somelines = match get_input_for_puzzle(day) {
     //     Some(lines) => lines,
@@ -27,7 +27,7 @@ async fn main() {
     // return;
 
     if let Some(input_lines) = get_input_for_puzzle(day) {
-        let result = day15::solve_b(&input_lines).await;
+        let result = day16::solve_b(&input_lines).await;
         println!("Result: {:?}", result);
     } else {
         println!("Input file not found for puzzle {}", day);
