@@ -6,10 +6,12 @@ use aoc2024::*;
 #[allow(unused_imports)]
 use comms::pico_sender::send_data_to_pico;
 
+use std::time::Instant;
+
 #[allow(unreachable_code)]
 #[tokio::main]
 async fn main() {
-    let day = 16;
+    let day = 17;
 
     // let somelines = match get_input_for_puzzle(day) {
     //     Some(lines) => lines,
@@ -25,10 +27,14 @@ async fn main() {
     // }
 
     // return;
-
+    
     if let Some(input_lines) = get_input_for_puzzle(day) {
-        let result = day16::solve_b(&input_lines).await;
+        let start_time = Instant::now();
+        let result = day17::solve_b(&input_lines).await;
+        let duration = start_time.elapsed();
+
         println!("Result: {:?}", result);
+        println!("Time taken: {:.2?}", duration);
     } else {
         println!("Input file not found for puzzle {}", day);
     }
