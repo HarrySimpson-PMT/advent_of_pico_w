@@ -118,7 +118,7 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     let start = (0, 0);
     let end = (70, 70);
 
-    for (i, &coord) in coordinates.iter().enumerate() {
+    for (_i, &coord) in coordinates.iter().enumerate() {
         grid.corrupt(coord.0, coord.1);
         println!("Corrupted byte: {},{}", coord.0, coord.1);
 

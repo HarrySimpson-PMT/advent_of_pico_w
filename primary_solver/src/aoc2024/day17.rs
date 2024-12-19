@@ -3,7 +3,6 @@ use tokio::io;
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 17, Part A");
 
-    // Parse input
     let program: Vec<u8> = lines
         .iter()
         .filter(|line| line.starts_with("Program:"))
@@ -82,9 +81,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     // let mut hight: i64 = 185184372088838;
     let mut low: i64 = test.0;
     let mut hight: i64 = test.1;
-    
-    let step = scan_and_reduce(low, hight, program.len(), &program, 1000);
-    // println!("Step: {:?}", step);
 
     let mut result = 0;
     for i in (0..program.len()).rev() {
