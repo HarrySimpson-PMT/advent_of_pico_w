@@ -11,7 +11,7 @@ use std::time::Instant;
 #[allow(unreachable_code)]
 #[tokio::main]
 async fn main() {
-    let day = 17;
+    let day = 18;
 
     // let somelines = match get_input_for_puzzle(day) {
     //     Some(lines) => lines,
@@ -30,7 +30,7 @@ async fn main() {
     
     if let Some(input_lines) = get_input_for_puzzle(day) {
         let start_time = Instant::now();
-        let result = day17::solve_b(&input_lines).await;
+        let result = day18::solve_b(&input_lines).await;
         let duration = start_time.elapsed();
 
         println!("Result: {:?}", result);

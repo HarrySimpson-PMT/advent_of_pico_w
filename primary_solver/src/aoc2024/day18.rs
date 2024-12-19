@@ -1,22 +1,136 @@
+use std::collections::{HashSet, VecDeque};
 use tokio::io;
 
-pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 17, Part A");
-    //print the input
-    for line in lines {
-        println!("{}", line);
+#[derive(Debug)]
+struct Grid {
+    size: usize,
+    grid: Vec<Vec<bool>>,
+}
+
+impl Grid {
+    fn new(size: usize) -> Self {
+        Grid {
+            size,
+            grid: vec![vec![false; size]; size],
+        }
     }
+
+    fn corrupt(&mut self, x: usize, y: usize) {
+        if x < self.size && y < self.size {
+            self.grid[y][x] = true;
+        }
+    }
+
+    fn is_safe(&self, x: usize, y: usize) -> bool {
+        x < self.size && y < self.size && !self.grid[y][x]
+    }
+
+    fn print(&self) {
+        for row in self.grid.iter() {
+            for &cell in row.iter() {
+                print!("{}", if cell { '#' } else { '.' });
+            }
+            println!();
+        }
+    }
+
+    fn find_shortest_path(&self, start: (usize, usize), end: (usize, usize)) -> bool {
+        let mut queue = VecDeque::new();
+        let mut visited = HashSet::new();
+
+        queue.push_back(start);
+        visited.insert(start);
+
+        let directions = [(0, 1), (1, 0), (0, -1), (-1, 0)];
+
+        while let Some((x, y)) = queue.pop_front() {
+            if (x, y) == end {
+                return true;
+            }
+
+            for (dx, dy) in directions.iter() {
+                let nx = x as isize + dx;
+                let ny = y as isize + dy;
+
+                if nx >= 0
+                    && ny >= 0
+                    && self.is_safe(nx as usize, ny as usize)
+                    && visited.insert((nx as usize, ny as usize))
+                {
+                    queue.push_back((nx as usize, ny as usize));
+                }
+            }
+        }
+
+        false
+    }
+}
+
+pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
+    println!("Solving Day 18, Part A");
+
+    let mut grid = Grid::new(71);
+
+    let coordinates: Vec<(usize, usize)> = lines
+        .iter()
+        .map(|line| {
+            let parts: Vec<usize> = line
+                .split(',')
+                .map(|s| s.parse().unwrap())
+                .collect();
+            (parts[0], parts[1])
+        })
+        .collect();
+
+    for &coord in coordinates.iter().take(1024) {
+        grid.corrupt(coord.0, coord.1);
+    }
+
+    grid.print();
+
+    let start = (0, 0);
+    let end = (70, 70);
+    match grid.find_shortest_path(start, end) {
+        true => println!("Path found"),
+        false => println!("No path found"),
+    }
+
     Ok(())
 }
 
+
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
-    println!("Solving Day 6, Part B");
-    //print the input
-    for line in lines {
-        println!("{}", line);
+    println!("Solving Day 18, Part B");
+
+    let mut grid = Grid::new(71); 
+
+    let coordinates: Vec<(usize, usize)> = lines
+        .iter()
+        .map(|line| {
+            let parts: Vec<usize> = line
+                .split(',')
+                .map(|s| s.parse().unwrap())
+                .collect();
+            (parts[0], parts[1])
+        })
+        .collect();
+
+    let start = (0, 0);
+    let end = (70, 70);
+
+    for (i, &coord) in coordinates.iter().enumerate() {
+        grid.corrupt(coord.0, coord.1);
+        println!("Corrupted byte: {},{}", coord.0, coord.1);
+
+        if !grid.find_shortest_path(start, end) {
+            println!("First blocking byte: {},{}", coord.0, coord.1);
+            break;
+        }
     }
+
     Ok(())
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
