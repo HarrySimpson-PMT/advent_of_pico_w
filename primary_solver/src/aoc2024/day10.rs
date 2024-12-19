@@ -1,17 +1,14 @@
 use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
-    // Parse the grid from input lines
     let grid: Vec<Vec<u32>> = lines
         .iter()
         .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect();
 
-    // Dimensions of the grid
     let rows = grid.len();
     let cols = grid[0].len();
 
-    // Function to calculate the score (number of paths to 9) from a given trailhead (x, y)
     fn count_paths_to_peak(grid: &Vec<Vec<u32>>, x: usize, y: usize) -> usize {
         let mut stack = vec![(x, y)];
         let mut visited = vec![vec![false; grid[0].len()]; grid.len()];
@@ -28,7 +25,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                 continue;
             }
 
-            // Check cardinal directions
             for (nx, ny) in [
                 (cx.wrapping_sub(1), cy), // Up
                 (cx + 1, cy),             // Down
@@ -47,7 +43,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         score
     }
 
-    // Sum the scores for all trailheads (cells with 0)
     let mut total_score = 0;
     for x in 0..rows {
         for y in 0..cols {
@@ -65,17 +60,14 @@ use std::collections::HashSet;
 
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
-    // Parse the grid from input lines
     let grid: Vec<Vec<u32>> = lines
         .iter()
         .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect();
 
-    // Dimensions of the grid
     let rows = grid.len();
     let cols = grid[0].len();
 
-    // Recursive DFS to find distinct paths
     fn find_distinct_paths(
         grid: &Vec<Vec<u32>>,
         x: usize,
@@ -84,12 +76,10 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         paths: &mut HashSet<Vec<(usize, usize)>>
     ) {
         if grid[x][y] == 9 {
-            // Reached a peak, add path to set
             paths.insert(path.clone());
             return;
         }
 
-        // Explore cardinal directions
         for (nx, ny) in [
             (x.wrapping_sub(1), y), // Up
             (x + 1, y),             // Down
@@ -99,16 +89,15 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             if nx < grid.len()
                 && ny < grid[0].len()
                 && grid[nx][ny] == grid[x][y] + 1
-                && !path.contains(&(nx, ny)) // Avoid cycles
+                && !path.contains(&(nx, ny)) 
             {
-                path.push((nx, ny)); // Add step to path
+                path.push((nx, ny)); 
                 find_distinct_paths(grid, nx, ny, path, paths);
-                path.pop(); // Backtrack
+                path.pop(); 
             }
         }
     }
 
-    // Sum the number of distinct paths for each trailhead (cells with 0)
     let mut total_paths = 0;
     for x in 0..rows {
         for y in 0..cols {

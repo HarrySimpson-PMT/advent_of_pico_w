@@ -4,7 +4,6 @@ use tokio::io;
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 6, Part A");
 
-    // Parse the grid and find the starting position
     let mut grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
     let mut start_pos = (0, 0);
     for (y, row) in grid.iter().enumerate() {
@@ -14,30 +13,25 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         }
     }
 
-    // Directions: North, East, South, West
     let directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
-    let mut dir_index = 0; // Start facing north
+    let mut dir_index = 0; 
 
     let mut visited = HashSet::new();
     let (mut x, mut y) = start_pos;
 
     while y < grid.len() && x < grid[0].len() {
         visited.insert((x, y));
-        //update the grid with the current position
         grid[y][x] = 'X';
 
-        // Move in the current direction
         let (dx, dy) = directions[dir_index];
         let (next_x, next_y) = ((x as isize + dx) as usize, (y as isize + dy) as usize);
 
-        // If out of bounds, stop
         if next_x >= grid[0].len() || next_y >= grid.len() {
             break;
         }
 
-        // Update position or change direction on '#'
         if grid[next_y][next_x] == '#' {
-            dir_index = (dir_index + 1) % 4; // Turn 90° to the right
+            dir_index = (dir_index + 1) % 4;
         } else {
             x = next_x;
             y = next_y;
@@ -45,7 +39,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     }
     println!();
     println!("Final location: ({}, {})", x, y);
-    //print final location
     for row in &grid {
         println!("{}", row.iter().collect::<String>());
     }
@@ -57,22 +50,18 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 6, Part B");
 
-    // Parse the grid and find the starting position
     let mut grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
     let mut start_pos = (0, 0);
     for (y, row) in grid.iter().enumerate() {
         if let Some(x) = row.iter().position(|&c| c == '^') {
             start_pos = (x, y);
-            // Mark the starting position as visited
             grid[y][x] = 'X';
             break;
         }
     }
 
-    // Directions: North, East, South, West
     let directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
 
-    // Define Position struct for tracking position and direction
     #[derive(Clone, Copy, PartialEq, Eq)]
     struct Position {
         x: usize,
@@ -94,26 +83,22 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             let next_x = pos.x as isize + dx;
             let next_y = pos.y as isize + dy;
     
-            // Stop if out of bounds
             if next_x < 0
                 || next_y < 0
                 || next_x >= grid[0].len() as isize
                 || next_y >= grid.len() as isize
             {
-                return false; // Exited the map
+                return false;
             }
     
             let (nx, ny) = (next_x as usize, next_y as usize);
     
-            // Check if we revisit any position in the visited set
             if visited_positions.contains(&(nx, ny, pos.dir_index)) {
-                return true; // Loop detected
+                return true;
             }
     
-            // Record current position
             visited_positions.insert((nx, ny, pos.dir_index));
     
-            // Move or turn
             if grid[ny][nx] == '#' {
                 pos.dir_index = (pos.dir_index + 1) % 4; // Turn 90° right
             } else {
@@ -123,7 +108,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         }
     }
 
-    // Track valid obstacle positions
     let mut result = 0;
     let mut pos = Position {
         x: start_pos.0,
@@ -132,15 +116,12 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     };
 
     loop {
-        // Mark the current position as visited
         grid[pos.y][pos.x] = 'X';
 
-        // Calculate next position
         let (dx, dy) = directions[pos.dir_index];
         let next_x = pos.x as isize + dx;
         let next_y = pos.y as isize + dy;
 
-        // Stop if out of bounds
         if next_x < 0
             || next_y < 0
             || next_x >= grid[0].len() as isize
@@ -151,9 +132,8 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
 
         let (nx, ny) = (next_x as usize, next_y as usize);
 
-        // Check for valid obstacle placement
         if grid[ny][nx] == '.' {
-            grid[ny][nx] = '#'; // Place the obstacle
+            grid[ny][nx] = '#'; 
             if loop_check(
                 &grid,
                 Position {
@@ -165,10 +145,9 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             ) {
                 result += 1;
             }
-            grid[ny][nx] = '.'; // Reset the obstacle
+            grid[ny][nx] = '.';
         }
 
-        // Move or turn
         if grid[ny][nx] == '#' {
             pos.dir_index = (pos.dir_index + 1) % 4; // Turn 90° right
         } else {

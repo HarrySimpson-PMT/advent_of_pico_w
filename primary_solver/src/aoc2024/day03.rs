@@ -23,7 +23,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 3, Part B");
-    // send_data_to_pico(lines.to_vec()).await
     let re = match Regex::new(r"mul\(\d+,\d+\)|don't\(\)|do\(\)") {
         Ok(re) => re,
         Err(err) => {

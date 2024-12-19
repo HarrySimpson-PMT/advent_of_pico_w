@@ -11,7 +11,6 @@ struct Position {
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 8, Part A");
 
-    // Step 1: Parse the input and store positions in a HashMap
     let mut positions: HashMap<char, Vec<Position>> = HashMap::new();
 
     for (y, line) in lines.iter().enumerate() {
@@ -28,11 +27,9 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         }
     }
 
-    // Step 2: Define grid boundaries
     let grid_width = lines[0].len() as isize;
     let grid_height = lines.len() as isize;
 
-    // Step 3: Iterate through each key and compute antinodes
     let mut found_points: HashSet<Position> = HashSet::new();
 
     for (&key, points) in &positions {
@@ -42,11 +39,9 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                 let p1 = points[i];
                 let p2 = points[j];
 
-                // Compute the distance between the points
                 let dx = p2.x - p1.x;
                 let dy = p2.y - p1.y;
 
-                // Compute antinodes
                 let antinode1 = Position {
                     x: p1.x - dx,
                     y: p1.y - dy,
@@ -56,10 +51,8 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                     y: p2.y + dy,
                 };
 
-                //print the nodes and antinodes
                 println!("Node1: {:?}, Node2: {:?}, Antinode1: {:?}, Antinode2: {:?}", p1, p2, antinode1, antinode2);
 
-                // Check if antinodes are within grid boundaries
                 if is_within_bounds(antinode1, grid_width, grid_height) {
                     found_points.insert(antinode1);
                 }
@@ -70,7 +63,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         }
     }
     let mut count = 0;
-    //update the grid with the found points
     for y in 0..grid_height {
         for x in 0..grid_width {
             let pos = Position { x, y };
@@ -89,13 +81,11 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     
     print!("Number of unique found points: {}", count);
 
-    // Step 4: Print the number of unique found points
     println!("Number of unique found points: {}", found_points.len());
 
     Ok(())
 }
 
-// Helper function to check if a position is within grid boundaries
 fn is_within_bounds(pos: Position, width: isize, height: isize) -> bool {
     pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height
 }
@@ -103,7 +93,6 @@ fn is_within_bounds(pos: Position, width: isize, height: isize) -> bool {
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 8, Part B");
 
-    // Step 1: Parse the input and store positions in a HashMap
     let mut positions: HashMap<char, Vec<Position>> = HashMap::new();
 
     for (y, line) in lines.iter().enumerate() {
@@ -120,11 +109,9 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         }
     }
 
-    // Step 2: Define grid boundaries
     let grid_width = lines[0].len() as isize;
     let grid_height = lines.len() as isize;
 
-    // Step 3: Iterate through each key and compute antinodes
     let mut found_points: HashSet<Position> = HashSet::new();
 
     for (&key, points) in &positions {
@@ -134,11 +121,9 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                 let p1 = points[i];
                 let p2 = points[j];
 
-                // Compute the distance between the points
                 let dx = p2.x - p1.x;
                 let dy = p2.y - p1.y;
 
-                // Extend antinodes until they fall off the grid
                 let mut antinode1 = Position { x: p1.x - dx, y: p1.y - dy };
                 let mut antinode2 = Position { x: p2.x + dx, y: p2.y + dy };
 
@@ -158,7 +143,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                     };
                 }
 
-                // Print the nodes and antinodes
                 println!(
                     "Node1: {:?}, Node2: {:?}, Last Antinode1: {:?}, Last Antinode2: {:?}",
                     p1, p2, antinode1, antinode2
@@ -168,7 +152,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     }
 
     let mut count = 0;
-    //update the grid with the found points
     for y in 0..grid_height {
         for x in 0..grid_width {
             let pos = Position { x, y };
@@ -187,7 +170,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     
     println!("Number of unique found points: {}", count);
 
-    // Step 5: Print the number of unique found points
     println!("Number of unique found points: {}", found_points.len());
 
     Ok(())

@@ -3,29 +3,24 @@ use tokio::io;
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 7, Part A");
 
-    // Recursive function to evaluate combinations
     fn evaluate_combinations(
         numbers: &Vec<i64>,
         index: usize,
         current_value: i64,
         target: i64,
     ) -> bool {
-        // Base case: if we're at the last number, check if the current value equals the target
         if index == numbers.len() {
             return current_value == target;
         }
 
-        // Recursive cases: try adding and multiplying the next number
         let next_value = numbers[index];
         evaluate_combinations(numbers, index + 1, current_value + next_value, target)
             || evaluate_combinations(numbers, index + 1, current_value * next_value, target)
     }
 
-    // Parse input and calculate the sum of valid targets
     let mut total_sum = 0;
 
     for line in lines {
-        // Parse the line into target and numbers
         if let Some((target_str, numbers_str)) = line.split_once(":") {
             let target: i64 = target_str.trim().parse().unwrap_or(0);
             let numbers: Vec<i64> = numbers_str
@@ -33,7 +28,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                 .map(|n| n.parse().unwrap_or(0))
                 .collect();
 
-            // Check if any combination of + and * results in the target
             if evaluate_combinations(&numbers, 1, numbers[0], target) {
                 total_sum += target;
             }

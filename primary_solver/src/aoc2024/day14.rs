@@ -6,10 +6,9 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let mid_x = width / 2;
     let mid_y = height / 2;
 
-    let mut quadrant_counts = [0; 4]; // Top-left, Top-right, Bottom-left, Bottom-right
+    let mut quadrant_counts = [0; 4]; 
 
     for line in lines {
-        // Parse position and velocity
         let parts: Vec<&str> = line.split_whitespace().collect();
         let p: Vec<i32> = parts[0][2..]
             .split(',')
@@ -22,16 +21,13 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         let (p_x, p_y) = (p[0], p[1]);
         let (v_x, v_y) = (v[0], v[1]);
 
-        // Calculate new position after 100 seconds
         let x_new = (p_x + 100 * v_x).rem_euclid(width as i32);
         let y_new = (p_y + 100 * v_y).rem_euclid(height as i32);
 
-        // Ignore robots on center lines
         if x_new == mid_x as i32 || y_new == mid_y as i32 {
             continue;
         }
 
-        // Determine the quadrant
         if x_new < mid_x as i32 && y_new < mid_y as i32 {
             quadrant_counts[0] += 1; // Top-left
         } else if x_new >= mid_x as i32 && y_new < mid_y as i32 {
@@ -43,7 +39,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         }
     }
 
-    // Calculate the safety factor
     let safety_factor: i32 = quadrant_counts.iter().product();
     println!("Safety Factor: {}", safety_factor);
 
@@ -54,7 +49,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     let width = 101;
     let height = 103;
 
-    // Parse positions and velocities
     let mut robots: Vec<((i32, i32), (i32, i32))> = lines
         .iter()
         .map(|line| {
@@ -78,13 +72,11 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             println!("Simulation terminated: exceeded 10,000 seconds.");
             break;
         }
-        // print!("\rTime: {} seconds", seconds);
         for (pos, vel) in &mut robots {
             pos.0 = (pos.0 + vel.0).rem_euclid(width as i32);
             pos.1 = (pos.1 + vel.1).rem_euclid(height as i32);
         }        
 
-        // Create and display the grid
         let mut grid = vec![vec!['.'; width]; height];
         for (pos, _) in &robots {
             grid[pos.1 as usize][pos.0 as usize] = '#';

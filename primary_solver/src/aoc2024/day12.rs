@@ -67,14 +67,12 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                     }
                 }
             }
-            // Add the segment to the map
             segments.insert((x, y), seg);
         }
 
         let calculate_perimeter = |segments: &HashMap<(usize, usize), Segment>| -> i32 {
             let mut perimeter = 0;
 
-            // Iterate through all segments and count walls
             for (_, seg) in segments {
                 if seg.n {
                     perimeter += 1;
@@ -94,7 +92,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         };
         let perimeter = calculate_perimeter(&mut segments);
         let result = area * perimeter;
-        // println!("Area: {}, Perimeter: {}", area, perimeter);
         result
     };
 
@@ -105,10 +102,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
                 let region = bfs(&mut grid, (x, y), plant);
                 total_price += region;
             }
-            // for row in &grid {
-            //     println!("{:?}", row);
-            // }
-            // println!();
         }
     }
 
@@ -120,12 +113,10 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 12, Part A");
 
-    // Parse input into a matrix
     let mut grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
     let rows = grid.len();
     let cols = grid[0].len();
 
-    // Struct to represent walls around a cell
     #[derive(Default, PartialEq, Debug)]
     struct Segment {
         n: bool,
@@ -137,7 +128,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
 
     let mut queue = VecDeque::new();
 
-    // BFS to explore a region
     let mut bfs = |grid: &mut Vec<Vec<char>>, start: (usize, usize), plant: char| -> i32 {
         println!("Start: {:?}", plant);
 
@@ -184,7 +174,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                     }
                 }
             }
-            // Add the segment to the map
             segments.insert((x, y), seg);
         }
 
@@ -195,21 +184,16 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         let calculate_perimeter = |segments: &mut HashMap<(usize, usize), Segment>| -> i32 {
             let mut perimeter = 0;
             while let Some((&(x, y), seg)) = segments.iter().next() {
-                //create queue that will be x y and direction
                 let mut queue = VecDeque::new();
-                //for each direction in seg
                 for (dir, is_wall) in vec![('n', seg.n), ('s', seg.s), ('e', seg.e), ('w', seg.w)] {
                     if is_wall {
                         queue.push_back((x, y, dir));
                     }
                 }
-                //remove the current segment from the hashmap
                 segments.remove(&(x, y));
-                //now we will iterate through the queue, for each wall we pull out we must find both ends. each piece of the wall we find we will remove that side from the hashmap.
                 while let Some((cx, cy, dir)) = queue.pop_front() {
                     match dir {
                         'n' => {
-                            // Remove the north wall for the current segment
                             if let Some(current_seg) = segments.get_mut(&(cx, cy)) {
                                 current_seg.n = false;
                                 if no_walls(current_seg) {
@@ -217,7 +201,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                                 }
                             }
 
-                            // Trace horizontally (east-west) for connected north walls
                             let mut run_cy = cy;
                             while run_cy < cols - 1
                                 && segments.get(&(cx, run_cy + 1)).map_or(false, |seg| seg.n)
@@ -246,7 +229,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                             perimeter += 1;
                         }
                         's' => {
-                            // Remove the south wall for the current segment
                             if let Some(current_seg) = segments.get_mut(&(cx, cy)) {
                                 current_seg.s = false;
                                 if no_walls(current_seg) {
@@ -254,7 +236,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                                 }
                             }
 
-                            // Trace horizontally (east-west) for connected south walls
                             let mut run_cy = cy;
                             while run_cy < cols - 1
                                 && segments.get(&(cx, run_cy + 1)).map_or(false, |seg| seg.s)
@@ -284,7 +265,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                             perimeter += 1;
                         }
                         'e' => {
-                            // Remove the east wall for the current segment
                             if let Some(current_seg) = segments.get_mut(&(cx, cy)) {
                                 current_seg.e = false;
                                 if no_walls(current_seg) {
@@ -292,7 +272,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                                 }
                             }
 
-                            // Trace vertically (north-south) for connected east walls
                             let mut run_cx = cx;
                             while run_cx > 0
                                 && segments.get(&(run_cx - 1, cy)).map_or(false, |seg| seg.e)
@@ -322,7 +301,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                             perimeter += 1;
                         }
                         'w' => {
-                            // Remove the west wall for the current segment
                             if let Some(current_seg) = segments.get_mut(&(cx, cy)) {
                                 current_seg.w = false;
                                 if no_walls(current_seg) {
@@ -330,7 +308,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
                                 }
                             }
 
-                            // Trace vertically (north-south) for connected west walls
                             let mut run_cx = cx;
                             while run_cx > 0
                                 && segments.get(&(run_cx - 1, cy)).map_or(false, |seg| seg.w)
@@ -371,7 +348,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         result
     };
 
-    // Iterate through the grid
     for x in 0..rows {
         for y in 0..cols {
             if grid[x][y] != '.' {

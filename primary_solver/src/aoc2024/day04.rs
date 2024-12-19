@@ -2,7 +2,6 @@ use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 4, Part A");
-    // send_data_to_pico(lines.to_vec()).await
     let target = "XMAS";
     let found_count = count_occurrences(&lines, target);
 
@@ -72,7 +71,6 @@ fn check_direction(
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 4, Part B");
-    // send_data_to_pico(lines.to_vec()).await
     let pattern_count = find_pattern(&lines);
 
     println!("Found {} patterns", pattern_count);
@@ -85,7 +83,6 @@ fn find_pattern(matrix: &Vec<String>) -> usize {
     let cols = matrix[0].len();
     let mut count = 0;
 
-    // Directions for diagonals
     let diagonals = [
         (-1, -1), // Top-left
         (-1, 1),  // Top-right
@@ -96,7 +93,6 @@ fn find_pattern(matrix: &Vec<String>) -> usize {
     for row in 0..rows {
         for col in 0..cols {
             if matrix[row].as_bytes()[col] == b'A' {
-                // Collect diagonal characters
                 let mut diag_chars = Vec::new();
                 for &(dx, dy) in &diagonals {
                     let new_row = row as isize + dx;
@@ -110,7 +106,6 @@ fn find_pattern(matrix: &Vec<String>) -> usize {
                         diag_chars.push(matrix[new_row as usize].as_bytes()[new_col as usize]);
                     }
                 }
-                // Check pattern validity
                 if diag_chars.len() == 4 {
                     let m_count = diag_chars.iter().filter(|&&c| c == b'M').count();
                     let s_count = diag_chars.iter().filter(|&&c| c == b'S').count();
