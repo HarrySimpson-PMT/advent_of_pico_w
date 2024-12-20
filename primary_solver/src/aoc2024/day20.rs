@@ -1,7 +1,6 @@
 use std::{
     cmp::Reverse,
     collections::{BinaryHeap, HashMap, HashSet},
-    result,
 };
 use tokio::io;
 
@@ -101,7 +100,7 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     for (&position, &time) in visited.iter() {
         for &(dr, dc) in directions.iter() {
             for cheat_steps in 1..=2 {
-                let mut new_position = (
+                let new_position = (
                     position.0 as i32 + dr * cheat_steps,
                     position.1 as i32 + dc * cheat_steps,
                 );
@@ -266,7 +265,7 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     }
 
     let mut cheat_savings: HashMap<usize, usize> = HashMap::new();
-    while let Some((time_saved, start, end)) = cheats.pop() {
+    while let Some((time_saved, _, _)) = cheats.pop() {
         *cheat_savings.entry(time_saved).or_insert(0) += 1;
     }
 

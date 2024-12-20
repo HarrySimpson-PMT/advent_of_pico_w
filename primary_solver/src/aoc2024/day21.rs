@@ -2,7 +2,9 @@ use tokio::io;
 
 pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 21, Part A");
-
+    for line in lines {
+        println!("{}", line);
+    }
     Ok(())
 }
 
