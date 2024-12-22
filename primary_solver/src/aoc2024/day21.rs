@@ -1,14 +1,11 @@
 use std::collections::HashMap;
-use std::{default, string};
 use tokio::io;
-
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 struct Position {
     row: i32,
     col: i32,
 }
-
 impl Position {
     fn new(row: i32, col: i32) -> Self {
         Position { row, col }
@@ -26,7 +23,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let north_west_b_gen1 = keypad_move(&north_west_b, &directional_keypad_map, true);
     let north_west_a_gen2 = keypad_move(&north_west_a_gen1, &directional_keypad_map, true);
     let north_west_b_gen2 = keypad_move(&north_west_b_gen1, &directional_keypad_map, true);
-    //compare the two
     println!("{}: {}", north_west_a_gen2.len(), north_west_b_gen2.len());
 
     let north_east_a = "^>A".to_string();
@@ -35,7 +31,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let north_east_b_gen1 = keypad_move(&north_east_b, &directional_keypad_map, true);
     let north_east_a_gen2 = keypad_move(&north_east_a_gen1, &directional_keypad_map, true);
     let north_east_b_gen2 = keypad_move(&north_east_b_gen1, &directional_keypad_map, true);
-    //compare the two
     println!("{}: {}", north_east_a_gen2.len(), north_east_b_gen2.len());
 
     let south_west_a = "v<A".to_string();
@@ -44,7 +39,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let south_west_b_gen1 = keypad_move(&south_west_b, &directional_keypad_map, true);
     let south_west_a_gen2 = keypad_move(&south_west_a_gen1, &directional_keypad_map, true);
     let south_west_b_gen2 = keypad_move(&south_west_b_gen1, &directional_keypad_map, true);
-    //compare the two
     println!("{}: {}", south_west_a_gen2.len(), south_west_b_gen2.len());
 
     let south_east_a = "v>A".to_string();
@@ -53,7 +47,6 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
     let south_east_b_gen1 = keypad_move(&south_east_b, &directional_keypad_map, true);
     let south_east_a_gen2 = keypad_move(&south_east_a_gen1, &directional_keypad_map, true);
     let south_east_b_gen2 = keypad_move(&south_east_b_gen1, &directional_keypad_map, true);
-    //compare the two
     println!("{}: {}", south_east_a_gen2.len(), south_east_b_gen2.len());
 
     let mut total_sum = 0;
@@ -66,9 +59,7 @@ pub async fn solve_a(lines: &Vec<String>) -> io::Result<()> {
         let first_three = line.chars().take(3).collect::<String>();
         let numb = first_three.parse::<i64>().unwrap_or(0);
         let result: i64 = len as i64 * numb;
-        //print line: third
         println!("{}: {}", line, third);
-        //print numb * len = result
         println!("{} * {} = {}", numb, len, result);
 
         total_sum += result;
@@ -161,70 +152,99 @@ fn calculate_movement(start: Position, end: Position, is_directional: bool) -> S
     let vertical_moves = end.row - start.row;
     let horizontal_moves = end.col - start.col;
 
-    // Apply horizontal movement first
-    if horizontal_moves < 0 {
-        movement.push_str(&"<".repeat(-horizontal_moves as usize));
-    } else if horizontal_moves > 0 {
-        movement.push_str(&">".repeat(horizontal_moves as usize));
-    }
-
-    // Apply vertical movement
-    if vertical_moves < 0 {
-        movement.push_str(&"^".repeat(-vertical_moves as usize));
-    } else if vertical_moves > 0 {
-        movement.push_str(&"v".repeat(vertical_moves as usize));
-    }
-
     let mut test_pos = start;
-
-    if horizontal_moves < 0 {
+    if horizontal_moves < 0 { // Moving left
         test_pos.col += horizontal_moves;
         if is_directional {
             if test_pos == Position::new(0, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+                if vertical_moves < 0 {
+                    movement.push_str(&"^".repeat(-vertical_moves as usize));
+                } else {
+                    movement.push_str(&"v".repeat(vertical_moves as usize));
+                }
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                
             } else {
-                movement = sort_movement(&movement, false);
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                if vertical_moves < 0 {
+                    movement.push_str(&"^".repeat(-vertical_moves as usize));
+                } else {
+                    movement.push_str(&"v".repeat(vertical_moves as usize));
+                }
             }
         } else {
+            println!("vertical moves: {}", vertical_moves);
             if test_pos == Position::new(3, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+                if vertical_moves < 0 {
+                    movement.push_str(&"^".repeat(-vertical_moves as usize));
+                } else {
+                    movement.push_str(&"v".repeat(vertical_moves as usize));
+                }
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
             } else {
-                movement = sort_movement(&movement, false);
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                if vertical_moves < 0 {
+                    movement.push_str(&"^".repeat(-vertical_moves as usize));
+                } else {
+                    movement.push_str(&"v".repeat(vertical_moves as usize));
+                }
             }
         }
-    } else if vertical_moves > 0 {
+    } else if vertical_moves < 0 { 
         test_pos.row += vertical_moves;
         if is_directional {
             if test_pos == Position::new(0, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+                if horizontal_moves < 0 {
+                    movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                } else {
+                    movement.push_str(&">".repeat(horizontal_moves as usize));
+                }
+                movement.push_str(&"^".repeat(-vertical_moves as usize));
             } else {
-                movement = sort_movement(&movement, false);
+                movement.push_str(&"^".repeat(-vertical_moves as usize));
+                if horizontal_moves < 0 {
+                    movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                } else {
+                    movement.push_str(&">".repeat(horizontal_moves as usize));
+                }
             }
         } else {
-            if test_pos == Position::new(3, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+            movement.push_str(&"^".repeat(-vertical_moves as usize));
+            if horizontal_moves < 0 {
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
             } else {
-                movement = sort_movement(&movement, false);
-            }
+                movement.push_str(&">".repeat(horizontal_moves as usize));
+            }            
         }
-    } else if horizontal_moves > 0 {
-        test_pos.col += horizontal_moves;
-
+    } else if vertical_moves > 0 { 
+        test_pos.row += vertical_moves;
         if is_directional {
-            if test_pos == Position::new(0, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+            movement.push_str(&"v".repeat(vertical_moves as usize));
+            if horizontal_moves < 0 {
+                movement.push_str(&"<".repeat(-horizontal_moves as usize));
             } else {
-                movement = sort_movement(&movement, false);
+                movement.push_str(&">".repeat(horizontal_moves as usize));
             }
         } else {
             if test_pos == Position::new(3, 0) {
-                movement = sort_movement(&movement, true); // Invert sorting
+                if horizontal_moves < 0 {
+                    movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                } else {
+                    movement.push_str(&">".repeat(horizontal_moves as usize));
+                }
+                movement.push_str(&"v".repeat(vertical_moves as usize));
             } else {
-                movement = sort_movement(&movement, false);
-            }
+                movement.push_str(&"v".repeat(vertical_moves as usize));
+                if horizontal_moves < 0 {
+                    movement.push_str(&"<".repeat(-horizontal_moves as usize));
+                } else {
+                    movement.push_str(&">".repeat(horizontal_moves as usize));
+                }
+            } 
         }
+    } else if horizontal_moves > 0 { 
+        movement.push_str(&">".repeat(horizontal_moves as usize));
     }
-
     movement
 }
 
@@ -296,13 +316,7 @@ pub fn build_maps() -> (HashMap<(char, char), String>, HashMap<(char, char), Str
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 21, Part B");
-    let input = lines.join("\n");
-    let result = calculate_combo_complexities::<25>(&input);
-    print!("Result: {}", result);
-//     return Ok(());
-
-// //allow unreachable code
-    // #[allow(unreachable_code)]    
+ 
     let (numeric_keypad_map, directional_keypad_map) = build_maps();
 
     let mut genmap: HashMap<String, i64> = HashMap::new();
@@ -325,26 +339,16 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     let test = "140A".to_string();
     let firsgen = keypad_move(&test.clone(), &numeric_keypad_map, false);
     let secgen = keypad_move(&firsgen, &directional_keypad_map, true);
-    let thirdgen = keypad_move(&secgen, &directional_keypad_map, true);
-    let fourthgen = keypad_move(&thirdgen, &directional_keypad_map, true);
-    let fifthgen = keypad_move(&fourthgen, &directional_keypad_map, true);
-    let sixthgen = keypad_move(&fifthgen, &directional_keypad_map, true);
-    let seventhgen = keypad_move(&sixthgen, &directional_keypad_map, true);
-    let eigthgen = keypad_move(&seventhgen, &directional_keypad_map, true);
-    let ninethgen = keypad_move(&eigthgen, &directional_keypad_map, true);
-    let tenthgen = keypad_move(&ninethgen, &directional_keypad_map, true);
 
-    println!("Test: {}", thirdgen.len());
     let mut gentest = keypad_move(&test.clone(), &numeric_keypad_map, false);
-    for i in 0..1 {
+    for _ in 0..1 {
         gentest = keypad_move(&gentest, &directional_keypad_map, true);
     }
     println!("Gen: {}", gentest.len());
-    //demo new string
     let mut demo  = String::new();
     let mut sum     = 0;
 
-    let mut split = secgen.split("A");
+    let split = secgen.split("A");
     for part in split {
         let mut part = part.to_string();
         part.push('A');
@@ -366,23 +370,18 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
             movement = keypad_move(&movement, &directional_keypad_map, true);
         }
         let mut len: i64 = 0;
-        //iterate through the movement and split after every A keep A to the left, then look up the value in the genmap
-        let mut split = movement.split("A");
+        let split = movement.split("A");
         for part in split {
             let mut part = part.to_string();
             part.push('A');
-            let default_part = "A".to_string();
-            let thispart = genmap2.get(&part).unwrap_or(&default_part);
             len += genmap.get(&part).unwrap_or(&1).clone() as i64;
         }
-        //minus 1 len
         len -= 1;
 
         let first_three = line.chars().take(3).collect::<String>();
         let numb = first_three.parse::<i64>().unwrap_or(0);
         let result: i64 = len as i64 * numb;
 
-        // Print the final result
         println!("{} * {} = {}", numb, len, result);
 
         total_sum += result;
@@ -399,154 +398,6 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     //  145819162083034
 }
 
-#[derive(Debug, Clone, Copy)]
-enum DirectionKey {
-    Up = 0,
-    Activate = 1,
-    Left = 2,
-    Down = 3,
-    Right = 4,
-}
-
-fn calc_level_costs(previous_costs: &[u64], new_costs: &mut [u64], paths: &[Vec<Vec<DirectionKey>>]) {
-    for (paths, new_cost) in paths.iter().zip(new_costs) {
-        *new_cost = paths.iter().map(|path| {
-            // Sum up the costs of going from each button to the next one and pressing it, starting from Activate
-            let mut pos = DirectionKey::Activate;
-            path.iter().map(|&new_pos| {
-                let cost = previous_costs[pos as usize * 5 + new_pos as usize];
-                pos = new_pos;
-                cost
-            }).sum()
-        }).min().unwrap()
-    }
-}
-
-fn get_paths<const HOLE_Y: u8>(paths: &mut Vec<Vec<DirectionKey>>, key_positions: &[[u8; 2]], start: usize, end: usize) {
-    let [start_x, start_y] = key_positions[start];
-    let [end_x, end_y] = key_positions[end];
-
-    if !(start_x == 0 && end_y == HOLE_Y) {
-        // Start by going vertically and then horizontally
-        // This must not be done if we start on the left button and go to the top row, as that would make us pass
-        // over an empty space.
-        let mut path = Vec::new();
-        if start_y < end_y {
-            path.extend((start_y..end_y).map(|_| DirectionKey::Down));
-        } else if start_y > end_y {
-            path.extend((end_y..start_y).map(|_| DirectionKey::Up));
-        }
-        if start_x < end_x {
-            path.extend((start_x..end_x).map(|_| DirectionKey::Right));
-        } else if start_x > end_x {
-            path.extend((end_x..start_x).map(|_| DirectionKey::Left));
-        }
-        // We always need to end with Activate, so we actually press the button we go to.
-        path.push(DirectionKey::Activate);
-        paths.push(path);
-    }
-
-    if start_x != end_x && start_y != end_y && !(start_y == HOLE_Y && end_x == 0) {
-        // If we need to both vertically and horizontally, we can also do it by going horizontally first.
-        // This must not be done if we end on the left button, as that would make us pass over an empty space.
-        let mut path = Vec::new();
-        if start_x < end_x {
-            path.extend((start_x..end_x).map(|_| DirectionKey::Right));
-        } else if start_x > end_x {
-            path.extend((end_x..start_x).map(|_| DirectionKey::Left));
-        }
-        if start_y < end_y {
-            path.extend((start_y..end_y).map(|_| DirectionKey::Down));
-        } else if start_y > end_y {
-            path.extend((end_y..start_y).map(|_| DirectionKey::Up));
-        }
-        // We always need to end with Activate, so we actually press the button we go to.
-        path.push(DirectionKey::Activate);
-        paths.push(path);
-    }
-
-    // It is never worth zigzagging, as such paths can be reduced into a non-zigzagging path just by duplicating
-    // some presses while eliminating others, to get a path that takes fewer presses in total.
-}
-
-fn calc_directional_key_costs<const ROBOT_KEYPADS: u8>() -> Vec<u64> {
-    // Where each key is located on the directional keypad
-    let direction_key_positions = [
-        [1, 0],
-        [2, 0],
-        [0, 1],
-        [1, 1],
-        [2, 1],
-    ];
-
-    // Possible button inputs required to get the robot at the next level to press any button from any starting position
-    let direction_key_paths: Vec<_> = (0..(5 * 5)).map(|i| {
-        let mut paths = Vec::new();
-        let start = i / 5;
-        let end = i % 5;
-        get_paths::<0>(&mut paths, &direction_key_positions, start, end);
-        paths
-    }).collect();
-
-    // How many button presses it takes to get to any button from any other button and then press it
-    let mut path_costs: Vec<u64> = direction_key_paths.iter().map(|paths| {
-        paths.iter().map(|path| path.len() as u64).min().unwrap()
-    }).collect();
-
-    let mut new_costs = vec![0; 5 * 5];
-    for _ in 0..ROBOT_KEYPADS - 1 {
-        calc_level_costs(&path_costs, &mut new_costs, &direction_key_paths);
-        std::mem::swap(&mut path_costs, &mut new_costs);
-    }
-
-    path_costs
-}
-
-fn calculate_combo_complexities<const ROBOT_KEYPADS: u8>(input: &str) -> u64 {
-    let directional_key_costs = calc_directional_key_costs::<ROBOT_KEYPADS>();
-
-    // Where each key is located on the numeric keypad.
-    // Elements represent positions of 0-9 followed by A
-    let numeric_key_positions = [
-        [1, 3],
-        [0, 2],
-        [1, 2],
-        [2, 2],
-        [0, 1],
-        [1, 1],
-        [2, 1],
-        [0, 0],
-        [1, 0],
-        [2, 0],
-        [2, 3],
-    ];
-
-    let mut paths = Vec::new();
-    input.lines().map(|combo| {
-        let number: u64 = combo.split('A').next().unwrap().parse().unwrap();
-
-        let mut pos = numeric_key_positions.len() - 1;
-        combo.chars().map(|key| {
-            let new_pos = match key {
-                '0'..='9' => key as usize - '0' as usize,
-                'A' => 10,
-                _ => panic!("Invalid character: {}", key),
-            };
-            get_paths::<3>(&mut paths, &numeric_key_positions, pos, new_pos);
-            let cost: u64 = paths.iter().map(|path| {
-                let mut pos = DirectionKey::Activate;
-                path.iter().map(|&new_pos| {
-                    let cost = directional_key_costs[pos as usize * 5 + new_pos as usize];
-                    pos = new_pos;
-                    cost
-                }).sum()
-            }).min().unwrap();
-            pos = new_pos;
-            paths.clear();
-            cost
-        }).sum::<u64>() * number
-    }).sum()
-}
 
 #[cfg(test)]
 mod tests {
