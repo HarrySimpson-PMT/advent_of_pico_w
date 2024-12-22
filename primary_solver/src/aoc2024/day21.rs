@@ -296,34 +296,34 @@ pub fn build_maps() -> (HashMap<(char, char), String>, HashMap<(char, char), Str
 
 pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     println!("Solving Day 21, Part B");
-//     let input = lines.join("\n");
-//     let result = calculate_combo_complexities::<25>(&input);
-//     print!("Result: {}", result);
+    let input = lines.join("\n");
+    let result = calculate_combo_complexities::<25>(&input);
+    print!("Result: {}", result);
 //     return Ok(());
 
 // //allow unreachable code
     // #[allow(unreachable_code)]    
     let (numeric_keypad_map, directional_keypad_map) = build_maps();
 
-    let mut genmap = HashMap::new();
+    let mut genmap: HashMap<String, i64> = HashMap::new();
     let mut genmap2 = HashMap::new();
     for (start_key, end_key) in directional_keypad_map.keys() {
         let mut movement = directional_keypad_map.get(&(*start_key, *end_key)).unwrap().clone();
         movement.push('A');
         let mapkey = movement.clone();
-        for _ in 0..14 {
+        for _ in 0..15 {
             movement = keypad_move(&movement, &directional_keypad_map, true).clone();
         }
         if movement.len() == 0 {
             movement.push('A');
         }
-        genmap.insert(mapkey.clone(), movement.len());
+        genmap.insert(mapkey.clone(), movement.len() as i64);
         genmap2.insert(mapkey.clone(), movement.clone());
         println!("{}: {}", mapkey, movement.len());
     }
     
     let test = "140A".to_string();
-    let firsgen = keypad_move(&test, &numeric_keypad_map, false);
+    let firsgen = keypad_move(&test.clone(), &numeric_keypad_map, false);
     let secgen = keypad_move(&firsgen, &directional_keypad_map, true);
     let thirdgen = keypad_move(&secgen, &directional_keypad_map, true);
     let fourthgen = keypad_move(&thirdgen, &directional_keypad_map, true);
@@ -333,12 +333,18 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
     let eigthgen = keypad_move(&seventhgen, &directional_keypad_map, true);
     let ninethgen = keypad_move(&eigthgen, &directional_keypad_map, true);
     let tenthgen = keypad_move(&ninethgen, &directional_keypad_map, true);
-    println!("Sec : {}", tenthgen.len());
+
+    println!("Test: {}", thirdgen.len());
+    let mut gentest = keypad_move(&test.clone(), &numeric_keypad_map, false);
+    for i in 0..1 {
+        gentest = keypad_move(&gentest, &directional_keypad_map, true);
+    }
+    println!("Gen: {}", gentest.len());
     //demo new string
     let mut demo  = String::new();
     let mut sum     = 0;
 
-    let mut split = fourthgen.split("A");
+    let mut split = secgen.split("A");
     for part in split {
         let mut part = part.to_string();
         part.push('A');
@@ -347,17 +353,16 @@ pub async fn solve_b(lines: &Vec<String>) -> io::Result<()> {
         sum += genmap.get(&part).unwrap_or(&1).clone();
         demo.push_str(&thispart.to_string());
     }
-    println!("Demo: {}: ", demo.len());
-    println!("Sum: {}", sum);
+    println!("Demo: {}: ", demo.len()-1);
+    println!("Sum: {}", sum-1);
     
-
 
     let mut total_sum = 0;
 
     for line in lines {
         let mut movement = keypad_move(&line, &numeric_keypad_map, false);
         println!("Input: {}", line);
-        for _ in 0..11 {
+        for _ in 0..10 {
             movement = keypad_move(&movement, &directional_keypad_map, true);
         }
         let mut len: i64 = 0;
